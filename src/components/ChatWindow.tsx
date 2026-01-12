@@ -3,6 +3,8 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import Icon from './ui/icon';
 import StickerPicker from './StickerPicker';
+import VoiceCallModal from './VoiceCallModal';
+import VideoCallModal from './VideoCallModal';
 
 interface Message {
   id: number;
@@ -14,24 +16,30 @@ interface Message {
   duration?: string;
 }
 
+interface Contact {
+  id: number;
+  username: string;
+  nickname: string;
+  avatar: string;
+  online: boolean;
+}
+
 interface ChatWindowProps {
   chatId: number;
   onBack: () => void;
   onProfileClick?: (userId: string) => void;
+  contact?: Contact;
 }
 
-const mockMessages: Message[] = [
-  { id: 1, text: 'Привет! Как дела?', time: '14:30', isMine: false, type: 'text' },
-  { id: 2, text: 'Отлично! Работаю над новым проектом', time: '14:31', isMine: true, type: 'text' },
-  { id: 3, text: 'document.pdf', time: '14:32', isMine: false, type: 'file', fileName: 'document.pdf' },
-  { id: 4, text: 'Голосовое сообщение', time: '14:33', isMine: true, type: 'voice', duration: '0:15' }
-];
+const mockMessages: Message[] = [];
 
-export default function ChatWindow({ chatId, onBack, onProfileClick }: ChatWindowProps) {
+export default function ChatWindow({ chatId, onBack, onProfileClick, contact }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [showStickerPicker, setShowStickerPicker] = useState(false);
+  const [showVoiceCall, setShowVoiceCall] = useState(false);
+  const [showVideoCall, setShowVideoCall] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
@@ -203,17 +211,17 @@ export default function ChatWindow({ chatId, onBack, onProfileClick }: ChatWindo
           className="flex items-center gap-3 flex-1 hover:bg-muted/50 rounded-lg p-2 -ml-2 transition-all"
         >
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-xl">
-            😊
+            {contact?.avatar || '👤'}
           </div>
           <div className="text-left">
-            <h2 className="font-semibold">Александр</h2>
-            <p className="text-xs text-muted-foreground">онлайн</p>
+            <h2 className="font-semibold">{contact?.nickname || 'Контакт'}</h2>
+            <p className="text-xs text-muted-foreground">{contact?.online ? 'онлайн' : 'не в сети'}</p>
           </div>
         </button>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={() => setShowVoiceCall(true)}>
           <Icon name="Phone" size={20} />
         </Button>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={() => setShowVideoCall(true)}>
           <Icon name="Video" size={20} />
         </Button>
       </div>
@@ -349,6 +357,20 @@ export default function ChatWindow({ chatId, onBack, onProfileClick }: ChatWindo
             setMessages([...messages, newMessage]);
           }
         }}
+      />
+
+      <VoiceCallModal
+        isOpen={showVoiceCall}
+        onClose={() => setShowVoiceCall(false)}
+        contactName={contact?.nickname || 'Контакт'}
+        contactAvatar={contact?.avatar || '👤'}
+      />
+
+      <VideoCallModal
+        isOpen={showVideoCall}
+        onClose={() => setShowVideoCall(false)}
+        contactName={contact?.nickname || 'Контакт'}
+        contactAvatar={contact?.avatar || '👤'}
       />
     </div>
   );
