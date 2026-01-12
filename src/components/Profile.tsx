@@ -3,6 +3,10 @@ import { Input } from './ui/input';
 import Icon from './ui/icon';
 import { useState } from 'react';
 import PaymentModal from './PaymentModal';
+import NotificationsModal from './NotificationsModal';
+import PrivacyModal from './PrivacyModal';
+import DataUsageModal from './DataUsageModal';
+import AppearanceModal from './AppearanceModal';
 
 interface ProfileProps {
   onBack: () => void;
@@ -15,6 +19,10 @@ export default function Profile({ onBack, userProfile }: ProfileProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showPrivacy, setShowPrivacy] = useState(false);
+  const [showDataUsage, setShowDataUsage] = useState(false);
+  const [showAppearance, setShowAppearance] = useState(false);
   const [profile, setProfile] = useState({
     nickname: userProfile?.nickname || 'Александр',
     username: userProfile?.username || 'alex_rocket',
@@ -177,6 +185,7 @@ export default function Profile({ onBack, userProfile }: ProfileProps) {
             <Button
               variant="outline"
               className="w-full justify-start gap-3 h-12"
+              onClick={() => setShowNotifications(true)}
             >
               <Icon name="Bell" size={20} />
               Уведомления
@@ -184,6 +193,7 @@ export default function Profile({ onBack, userProfile }: ProfileProps) {
             <Button
               variant="outline"
               className="w-full justify-start gap-3 h-12"
+              onClick={() => setShowPrivacy(true)}
             >
               <Icon name="Lock" size={20} />
               Приватность и безопасность
@@ -191,6 +201,7 @@ export default function Profile({ onBack, userProfile }: ProfileProps) {
             <Button
               variant="outline"
               className="w-full justify-start gap-3 h-12"
+              onClick={() => setShowDataUsage(true)}
             >
               <Icon name="Database" size={20} />
               Использование данных
@@ -198,6 +209,7 @@ export default function Profile({ onBack, userProfile }: ProfileProps) {
             <Button
               variant="outline"
               className="w-full justify-start gap-3 h-12"
+              onClick={() => setShowAppearance(true)}
             >
               <Icon name="Palette" size={20} />
               Оформление
@@ -220,6 +232,26 @@ export default function Profile({ onBack, userProfile }: ProfileProps) {
         isOpen={showPayment} 
         onClose={() => setShowPayment(false)}
         onSuccess={() => setIsPremium(true)}
+      />
+
+      <NotificationsModal
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
+
+      <PrivacyModal
+        isOpen={showPrivacy}
+        onClose={() => setShowPrivacy(false)}
+      />
+
+      <DataUsageModal
+        isOpen={showDataUsage}
+        onClose={() => setShowDataUsage(false)}
+      />
+
+      <AppearanceModal
+        isOpen={showAppearance}
+        onClose={() => setShowAppearance(false)}
       />
     </div>
   );

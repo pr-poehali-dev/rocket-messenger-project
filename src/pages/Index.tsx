@@ -65,11 +65,17 @@ export default function Index() {
   };
 
   if (!isLoggedIn && currentView === 'registration') {
-    return <Registration onComplete={(profile) => {
-      setUserProfile(profile);
-      setIsLoggedIn(true);
-      setCurrentView('chats');
-    }} />;
+    return <Registration 
+      onComplete={(profile) => {
+        setUserProfile(profile);
+        setIsLoggedIn(true);
+        setCurrentView('chats');
+      }}
+      onLogin={() => {
+        setIsLoggedIn(true);
+        setCurrentView('chats');
+      }}
+    />;
   }
 
   return (
