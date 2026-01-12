@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChatList from '../components/ChatList';
 import ChatWindow from '../components/ChatWindow';
 import Profile from '../components/Profile';
@@ -8,6 +8,18 @@ import AddContactModal from '../components/AddContactModal';
 import { Button } from '../components/ui/button';
 import Icon from '../components/ui/icon';
 
+interface Contact {
+  id: number;
+  username: string;
+  nickname: string;
+  avatar: string;
+  lastMessage: string;
+  time: string;
+  unread: number;
+  online: boolean;
+  isFavorite?: boolean;
+}
+
 export default function Index() {
   const [currentView, setCurrentView] = useState<'chats' | 'profile' | 'registration'>('registration');
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
@@ -16,6 +28,41 @@ export default function Index() {
   const [showGroupCreator, setShowGroupCreator] = useState(false);
   const [showAddContact, setShowAddContact] = useState(false);
   const [userProfile, setUserProfile] = useState<{nickname: string, username: string, avatar: string} | null>(null);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+
+  useEffect(() => {
+    const savedContacts = localStorage.getItem('rocket_contacts');
+    if (savedContacts) {
+      setContacts(JSON.parse(savedContacts));
+    }
+  }, []);
+
+  const saveContacts = (newContacts: Contact[]) => {
+    setContacts(newContacts);
+    localStorage.setItem('rocket_contacts', JSON.stringify(newContacts));
+  };
+
+  const addContact = (contact: { username: string; nickname: string }) => {
+    const newContact: Contact = {
+      id: Date.now(),
+      username: contact.username,
+      nickname: contact.nickname,
+      avatar: '👤',
+      lastMessage: '',
+      time: '',
+      unread: 0,
+      online: false,
+      isFavorite: false
+    };
+    saveContacts([...contacts, newContact]);
+  };
+
+  const toggleFavorite = (contactId: number) => {
+    const updated = contacts.map(c => 
+      c.id === contactId ? {...c, isFavorite: !c.isFavorite} : c
+    );
+    saveContacts(updated);
+  };
 
   if (!isLoggedIn && currentView === 'registration') {
     return <Registration onComplete={(profile) => {
@@ -63,7 +110,12 @@ export default function Index() {
                   Контакт
                 </Button>
               </div>
-              <ChatList onSelectChat={setSelectedChat} selectedChat={selectedChat} />
+              <ChatList 
+                onSelectChat={setSelectedChat} 
+                selectedChat={selectedChat}
+                contacts={contacts}
+                onToggleFavorite={toggleFavorite}
+              />
             </>
           ) : (
             <Profile onBack={() => setCurrentView('chats')} isOwnProfile={true} userProfile={userProfile} />
@@ -111,7 +163,7 @@ export default function Index() {
         isOpen={showAddContact}
         onClose={() => setShowAddContact(false)}
         onAdd={(contact) => {
-          console.log('Added contact:', contact);
+          addContact(contact);
           setShowAddContact(false);
         }}
       />

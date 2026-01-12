@@ -3,6 +3,8 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import Icon from './ui/icon';
 import StickerPicker from './StickerPicker';
+import VoiceCallModal from './VoiceCallModal';
+import VideoCallModal from './VideoCallModal';
 
 interface Message {
   id: number;
@@ -32,6 +34,8 @@ export default function ChatWindow({ chatId, onBack, onProfileClick }: ChatWindo
   const [inputMessage, setInputMessage] = useState('');
   const [showAttachMenu, setShowAttachMenu] = useState(false);
   const [showStickerPicker, setShowStickerPicker] = useState(false);
+  const [showVoiceCall, setShowVoiceCall] = useState(false);
+  const [showVideoCall, setShowVideoCall] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
@@ -210,10 +214,10 @@ export default function ChatWindow({ chatId, onBack, onProfileClick }: ChatWindo
             <p className="text-xs text-muted-foreground">онлайн</p>
           </div>
         </button>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={() => setShowVoiceCall(true)}>
           <Icon name="Phone" size={20} />
         </Button>
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={() => setShowVideoCall(true)}>
           <Icon name="Video" size={20} />
         </Button>
       </div>
@@ -349,6 +353,20 @@ export default function ChatWindow({ chatId, onBack, onProfileClick }: ChatWindo
             setMessages([...messages, newMessage]);
           }
         }}
+      />
+
+      <VoiceCallModal
+        isOpen={showVoiceCall}
+        onClose={() => setShowVoiceCall(false)}
+        contactName="Александр"
+        contactAvatar="😊"
+      />
+
+      <VideoCallModal
+        isOpen={showVideoCall}
+        onClose={() => setShowVideoCall(false)}
+        contactName="Александр"
+        contactAvatar="😊"
       />
     </div>
   );

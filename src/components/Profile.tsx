@@ -107,15 +107,15 @@ export default function Profile({ onBack, userProfile }: ProfileProps) {
             </h3>
             <div className="grid grid-cols-3 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary">1,234</div>
+                <div className="text-2xl font-bold text-primary">0</div>
                 <div className="text-xs text-muted-foreground">Сообщений</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-secondary">56</div>
+                <div className="text-2xl font-bold text-secondary">0</div>
                 <div className="text-xs text-muted-foreground">Звонков</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-accent">789</div>
+                <div className="text-2xl font-bold text-accent">0</div>
                 <div className="text-xs text-muted-foreground">Файлов</div>
               </div>
             </div>
