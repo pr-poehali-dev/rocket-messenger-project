@@ -6,6 +6,8 @@ import PaymentModal from './PaymentModal';
 
 interface ProfileProps {
   onBack: () => void;
+  userId?: string;
+  isOwnProfile?: boolean;
 }
 
 export default function Profile({ onBack }: ProfileProps) {
@@ -95,6 +97,27 @@ export default function Profile({ onBack }: ProfileProps) {
             ) : (
               <p className="text-sm text-muted-foreground">{profile.bio}</p>
             )}
+          </div>
+
+          <div className="bg-card rounded-2xl p-4 space-y-4 animate-fade-in">
+            <h3 className="font-semibold flex items-center gap-2">
+              <Icon name="BarChart3" size={18} />
+              Статистика
+            </h3>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">1,234</div>
+                <div className="text-xs text-muted-foreground">Сообщений</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-secondary">56</div>
+                <div className="text-xs text-muted-foreground">Звонков</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-accent">789</div>
+                <div className="text-xs text-muted-foreground">Файлов</div>
+              </div>
+            </div>
           </div>
 
           {isEditing && (

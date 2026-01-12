@@ -3,11 +3,16 @@ import ChatList from '../components/ChatList';
 import ChatWindow from '../components/ChatWindow';
 import Profile from '../components/Profile';
 import Registration from '../components/Registration';
+import GroupChatCreator from '../components/GroupChatCreator';
+import { Button } from '../components/ui/button';
+import Icon from '../components/ui/icon';
 
 export default function Index() {
   const [currentView, setCurrentView] = useState<'chats' | 'profile' | 'registration'>('registration');
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
+  const [selectedUserProfile, setSelectedUserProfile] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showGroupCreator, setShowGroupCreator] = useState(false);
 
   if (!isLoggedIn && currentView === 'registration') {
     return <Registration onComplete={() => {
@@ -35,14 +40,40 @@ export default function Index() {
           </div>
           
           {currentView === 'chats' ? (
-            <ChatList onSelectChat={setSelectedChat} selectedChat={selectedChat} />
+            <>
+              <div className="p-3 border-b border-border">
+                <Button
+                  onClick={() => setShowGroupCreator(true)}
+                  className="w-full bg-gradient-to-r from-primary to-secondary h-10"
+                  size="sm"
+                >
+                  <Icon name="Users" className="mr-2" size={18} />
+                  Создать группу
+                </Button>
+              </div>
+              <ChatList onSelectChat={setSelectedChat} selectedChat={selectedChat} />
+            </>
           ) : (
-            <Profile onBack={() => setCurrentView('chats')} />
+            <Profile onBack={() => setCurrentView('chats')} isOwnProfile={true} />
           )}
         </div>
 
         {selectedChat !== null && (
-          <ChatWindow chatId={selectedChat} onBack={() => setSelectedChat(null)} />
+          <ChatWindow 
+            chatId={selectedChat} 
+            onBack={() => setSelectedChat(null)}
+            onProfileClick={(userId) => setSelectedUserProfile(userId)}
+          />
+        )}
+
+        {selectedUserProfile && (
+          <div className="flex-1 bg-card">
+            <Profile 
+              onBack={() => setSelectedUserProfile(null)} 
+              userId={selectedUserProfile}
+              isOwnProfile={false}
+            />
+          </div>
         )}
         
         {selectedChat === null && currentView === 'chats' && (
@@ -54,6 +85,14 @@ export default function Index() {
           </div>
         )}
       </div>
+
+      <GroupChatCreator
+        isOpen={showGroupCreator}
+        onClose={() => setShowGroupCreator(false)}
+        onCreate={(name, members) => {
+          console.log('Created group:', name, members);
+        }}
+      />
     </div>
   );
 }

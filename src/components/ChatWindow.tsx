@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import Icon from './ui/icon';
+import StickerPicker from './StickerPicker';
 
 interface Message {
   id: number;
@@ -16,6 +17,7 @@ interface Message {
 interface ChatWindowProps {
   chatId: number;
   onBack: () => void;
+  onProfileClick?: (userId: string) => void;
 }
 
 const mockMessages: Message[] = [
@@ -25,10 +27,11 @@ const mockMessages: Message[] = [
   { id: 4, text: 'Голосовое сообщение', time: '14:33', isMine: true, type: 'voice', duration: '0:15' }
 ];
 
-export default function ChatWindow({ chatId, onBack }: ChatWindowProps) {
+export default function ChatWindow({ chatId, onBack, onProfileClick }: ChatWindowProps) {
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [showAttachMenu, setShowAttachMenu] = useState(false);
+  const [showStickerPicker, setShowStickerPicker] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
@@ -195,13 +198,18 @@ export default function ChatWindow({ chatId, onBack }: ChatWindowProps) {
         >
           <Icon name="ArrowLeft" size={20} />
         </Button>
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-xl">
-          😊
-        </div>
-        <div className="flex-1">
-          <h2 className="font-semibold">Александр</h2>
-          <p className="text-xs text-muted-foreground">онлайн</p>
-        </div>
+        <button
+          onClick={() => onProfileClick?.('user_1')}
+          className="flex items-center gap-3 flex-1 hover:bg-muted/50 rounded-lg p-2 -ml-2 transition-all"
+        >
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-xl">
+            😊
+          </div>
+          <div className="text-left">
+            <h2 className="font-semibold">Александр</h2>
+            <p className="text-xs text-muted-foreground">онлайн</p>
+          </div>
+        </button>
         <Button variant="ghost" size="sm">
           <Icon name="Phone" size={20} />
         </Button>
@@ -269,30 +277,58 @@ export default function ChatWindow({ chatId, onBack }: ChatWindowProps) {
           </div>
         )}
 
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowAttachMenu(!showAttachMenu)}
-            className="shrink-0"
-          >
-            <Icon name="Paperclip" size={20} />
-          </Button>
-          <Input
-            type="text"
-            placeholder="Сообщение..."
-            value={inputMessage}
-            onChange={(e) => setInputMessage(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-            className="flex-1"
-          />
-          <Button
-            size="sm"
-            onClick={handleSend}
-            className="shrink-0 bg-gradient-to-r from-primary to-secondary"
-          >
-            <Icon name="Send" size={20} />
-          </Button>
+        <div className="relative">
+          {showStickerPicker && (
+            <div className="absolute bottom-full right-0 mb-2">
+              <StickerPicker
+                onSelect={(type, content) => {
+                  const newMessage: Message = {
+                    id: messages.length + 1,
+                    text: content,
+                    time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+                    isMine: true,
+                    type: 'text'
+                  };
+                  setMessages([...messages, newMessage]);
+                }}
+                onClose={() => setShowStickerPicker(false)}
+              />
+            </div>
+          )}
+          
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowAttachMenu(!showAttachMenu)}
+              className="shrink-0"
+            >
+              <Icon name="Paperclip" size={20} />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowStickerPicker(!showStickerPicker)}
+              className="shrink-0"
+            >
+              <Icon name="Smile" size={20} />
+            </Button>
+            <Input
+              type="text"
+              placeholder="Сообщение..."
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+              className="flex-1"
+            />
+            <Button
+              size="sm"
+              onClick={handleSend}
+              className="shrink-0 bg-gradient-to-r from-primary to-secondary"
+            >
+              <Icon name="Send" size={20} />
+            </Button>
+          </div>
         </div>
       </div>
 
