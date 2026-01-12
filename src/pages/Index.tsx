@@ -127,6 +127,7 @@ export default function Index() {
             chatId={selectedChat} 
             onBack={() => setSelectedChat(null)}
             onProfileClick={(userId) => setSelectedUserProfile(userId)}
+            contact={contacts.find(c => c.id === selectedChat)}
           />
         )}
 
