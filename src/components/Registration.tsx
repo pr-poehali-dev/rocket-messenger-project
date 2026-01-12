@@ -4,7 +4,7 @@ import { Input } from './ui/input';
 import Icon from './ui/icon';
 
 interface RegistrationProps {
-  onComplete: () => void;
+  onComplete: (profile: {nickname: string, username: string, avatar: string}) => void;
 }
 
 export default function Registration({ onComplete }: RegistrationProps) {
@@ -41,7 +41,11 @@ export default function Registration({ onComplete }: RegistrationProps) {
     } else if (step === 2 && formData.username) {
       setStep(3);
     } else if (step === 3) {
-      onComplete();
+      onComplete({
+        nickname: formData.nickname,
+        username: formData.username,
+        avatar: formData.avatarType === 'photo' ? formData.photoUrl : formData.avatar
+      });
     }
   };
 

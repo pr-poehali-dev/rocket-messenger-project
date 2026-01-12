@@ -17,53 +17,7 @@ interface ChatListProps {
   selectedChat: number | null;
 }
 
-const mockChats: Chat[] = [
-  {
-    id: 1,
-    name: 'Александр',
-    avatar: '😊',
-    lastMessage: 'Привет! Как дела?',
-    time: '14:32',
-    unread: 2,
-    online: true
-  },
-  {
-    id: 2,
-    name: 'Мария',
-    avatar: '🎨',
-    lastMessage: 'Отправила файлы',
-    time: '13:15',
-    unread: 0,
-    online: true
-  },
-  {
-    id: 3,
-    name: 'Группа разработчиков',
-    avatar: '💻',
-    lastMessage: 'Новое обновление готово',
-    time: '12:00',
-    unread: 5,
-    online: false
-  },
-  {
-    id: 4,
-    name: 'Дмитрий',
-    avatar: '🎮',
-    lastMessage: 'Голосовое сообщение',
-    time: '11:48',
-    unread: 0,
-    online: false
-  },
-  {
-    id: 5,
-    name: 'Бот поддержки',
-    avatar: '🤖',
-    lastMessage: 'Чем могу помочь?',
-    time: 'Вчера',
-    unread: 0,
-    online: true
-  }
-];
+const mockChats: Chat[] = [];
 
 export default function ChatList({ onSelectChat, selectedChat }: ChatListProps) {
   const [searchQuery, setSearchQuery] = useState('');

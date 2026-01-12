@@ -4,6 +4,7 @@ import ChatWindow from '../components/ChatWindow';
 import Profile from '../components/Profile';
 import Registration from '../components/Registration';
 import GroupChatCreator from '../components/GroupChatCreator';
+import AddContactModal from '../components/AddContactModal';
 import { Button } from '../components/ui/button';
 import Icon from '../components/ui/icon';
 
@@ -13,9 +14,12 @@ export default function Index() {
   const [selectedUserProfile, setSelectedUserProfile] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showGroupCreator, setShowGroupCreator] = useState(false);
+  const [showAddContact, setShowAddContact] = useState(false);
+  const [userProfile, setUserProfile] = useState<{nickname: string, username: string, avatar: string} | null>(null);
 
   if (!isLoggedIn && currentView === 'registration') {
-    return <Registration onComplete={() => {
+    return <Registration onComplete={(profile) => {
+      setUserProfile(profile);
       setIsLoggedIn(true);
       setCurrentView('chats');
     }} />;
@@ -41,20 +45,28 @@ export default function Index() {
           
           {currentView === 'chats' ? (
             <>
-              <div className="p-3 border-b border-border">
+              <div className="p-3 border-b border-border flex gap-2">
                 <Button
                   onClick={() => setShowGroupCreator(true)}
-                  className="w-full bg-gradient-to-r from-primary to-secondary h-10"
+                  className="flex-1 bg-gradient-to-r from-primary to-secondary h-10"
                   size="sm"
                 >
                   <Icon name="Users" className="mr-2" size={18} />
-                  Создать группу
+                  Группа
+                </Button>
+                <Button
+                  onClick={() => setShowAddContact(true)}
+                  className="flex-1 bg-gradient-to-r from-secondary to-accent h-10"
+                  size="sm"
+                >
+                  <Icon name="UserPlus" className="mr-2" size={18} />
+                  Контакт
                 </Button>
               </div>
               <ChatList onSelectChat={setSelectedChat} selectedChat={selectedChat} />
             </>
           ) : (
-            <Profile onBack={() => setCurrentView('chats')} isOwnProfile={true} />
+            <Profile onBack={() => setCurrentView('chats')} isOwnProfile={true} userProfile={userProfile} />
           )}
         </div>
 
@@ -91,6 +103,16 @@ export default function Index() {
         onClose={() => setShowGroupCreator(false)}
         onCreate={(name, members) => {
           console.log('Created group:', name, members);
+          setShowGroupCreator(false);
+        }}
+      />
+
+      <AddContactModal
+        isOpen={showAddContact}
+        onClose={() => setShowAddContact(false)}
+        onAdd={(contact) => {
+          console.log('Added contact:', contact);
+          setShowAddContact(false);
         }}
       />
     </div>

@@ -8,16 +8,17 @@ interface ProfileProps {
   onBack: () => void;
   userId?: string;
   isOwnProfile?: boolean;
+  userProfile?: {nickname: string, username: string, avatar: string} | null;
 }
 
-export default function Profile({ onBack }: ProfileProps) {
+export default function Profile({ onBack, userProfile }: ProfileProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [profile, setProfile] = useState({
-    nickname: 'Александр',
-    username: 'alex_rocket',
-    avatar: '😊',
+    nickname: userProfile?.nickname || 'Александр',
+    username: userProfile?.username || 'alex_rocket',
+    avatar: userProfile?.avatar || '😊',
     bio: 'Люблю современные технологии 🚀'
   });
 
