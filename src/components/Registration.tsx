@@ -4,14 +4,11 @@ import { Input } from './ui/input';
 import Icon from './ui/icon';
 
 interface RegistrationProps {
-  onComplete: (profile: {nickname: string, username: string, avatar: string}) => void;
-  onLogin: () => void;
+  onComplete: () => void;
 }
 
-export default function Registration({ onComplete, onLogin }: RegistrationProps) {
-  const [isLoginMode, setIsLoginMode] = useState(false);
+export default function Registration({ onComplete }: RegistrationProps) {
   const [step, setStep] = useState(1);
-  const [loginData, setLoginData] = useState({ username: '' });
   const [formData, setFormData] = useState({
     nickname: '',
     username: '',
@@ -44,85 +41,9 @@ export default function Registration({ onComplete, onLogin }: RegistrationProps)
     } else if (step === 2 && formData.username) {
       setStep(3);
     } else if (step === 3) {
-      localStorage.setItem(`rocket_user_${formData.username}`, JSON.stringify({
-        nickname: formData.nickname,
-        username: formData.username,
-        avatar: formData.avatarType === 'photo' ? formData.photoUrl : formData.avatar
-      }));
-      onComplete({
-        nickname: formData.nickname,
-        username: formData.username,
-        avatar: formData.avatarType === 'photo' ? formData.photoUrl : formData.avatar
-      });
+      onComplete();
     }
   };
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    const savedUser = localStorage.getItem(`rocket_user_${loginData.username}`);
-    if (savedUser) {
-      const userData = JSON.parse(savedUser);
-      onComplete(userData);
-    } else {
-      alert('Пользователь не найден. Зарегистрируйтесь!');
-    }
-  };
-
-  if (isLoginMode) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent p-4">
-        <div className="w-full max-w-md bg-card rounded-3xl shadow-2xl p-8 animate-scale-in">
-          <div className="text-center mb-8">
-            <div className="text-6xl mb-4 animate-fade-in">🚀</div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-2">
-              Вход
-            </h1>
-            <p className="text-muted-foreground">Войдите в свой аккаунт</p>
-          </div>
-
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div className="animate-fade-in space-y-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Юзернейм</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">@</span>
-                  <Input
-                    type="text"
-                    placeholder="username"
-                    value={loginData.username}
-                    onChange={(e) => setLoginData({ username: e.target.value })}
-                    className="h-12 text-lg pl-8"
-                    autoFocus
-                  />
-                </div>
-              </div>
-            </div>
-
-            <Button
-              type="submit"
-              disabled={!loginData.username}
-              className="w-full h-12 bg-gradient-to-r from-primary to-secondary hover:opacity-90 transition-opacity"
-            >
-              Войти
-            </Button>
-
-            <button
-              type="button"
-              onClick={() => setIsLoginMode(false)}
-              className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Нет аккаунта? <span className="text-primary font-medium">Зарегистрироваться</span>
-            </button>
-          </form>
-
-          <div className="mt-8 text-center text-sm text-muted-foreground">
-            <Icon name="Lock" className="inline mr-1" size={16} />
-            Защищено сквозным шифрованием
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent p-4">
@@ -275,14 +196,6 @@ export default function Registration({ onComplete, onLogin }: RegistrationProps)
             </Button>
           </div>
         </form>
-
-        <button
-          type="button"
-          onClick={() => setIsLoginMode(true)}
-          className="mt-6 w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Уже есть аккаунт? <span className="text-primary font-medium">Войти</span>
-        </button>
 
         <div className="mt-8 text-center text-sm text-muted-foreground">
           <Icon name="Lock" className="inline mr-1" size={16} />
