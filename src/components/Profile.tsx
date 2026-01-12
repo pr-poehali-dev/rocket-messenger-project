@@ -2,6 +2,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import Icon from './ui/icon';
 import { useState } from 'react';
+import PaymentModal from './PaymentModal';
 
 interface ProfileProps {
   onBack: () => void;
@@ -9,6 +10,8 @@ interface ProfileProps {
 
 export default function Profile({ onBack }: ProfileProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const [showPayment, setShowPayment] = useState(false);
+  const [isPremium, setIsPremium] = useState(false);
   const [profile, setProfile] = useState({
     nickname: 'Александр',
     username: 'alex_rocket',
@@ -112,6 +115,40 @@ export default function Profile({ onBack }: ProfileProps) {
             </div>
           )}
 
+          {!isPremium && (
+            <div className="bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 rounded-2xl p-6 space-y-4 animate-fade-in relative overflow-hidden">
+              <div className="absolute top-0 right-0 text-6xl opacity-10">✨</div>
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <Icon name="Crown" size={24} className="text-primary" />
+                  <h3 className="text-xl font-bold">Rocket Premium</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Получите доступ ко всем возможностям мессенджера
+                </p>
+                <Button
+                  onClick={() => setShowPayment(true)}
+                  className="w-full bg-gradient-to-r from-primary to-secondary h-12"
+                >
+                  <Icon name="Sparkles" className="mr-2" size={20} />
+                  Оформить Premium
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {isPremium && (
+            <div className="bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 rounded-2xl p-6 space-y-2 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <Icon name="Crown" size={20} className="text-primary" />
+                <span className="font-bold">Premium активен</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Подписка действует до 12 января 2027
+              </p>
+            </div>
+          )}
+
           <div className="space-y-3 animate-fade-in">
             <Button
               variant="outline"
@@ -154,6 +191,12 @@ export default function Profile({ onBack }: ProfileProps) {
           </div>
         </div>
       </div>
+
+      <PaymentModal 
+        isOpen={showPayment} 
+        onClose={() => setShowPayment(false)}
+        onSuccess={() => setIsPremium(true)}
+      />
     </div>
   );
 }

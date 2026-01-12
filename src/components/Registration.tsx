@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import Icon from './ui/icon';
@@ -12,8 +12,27 @@ export default function Registration({ onComplete }: RegistrationProps) {
   const [formData, setFormData] = useState({
     nickname: '',
     username: '',
-    avatar: ''
+    avatar: '',
+    avatarType: 'emoji' as 'emoji' | 'photo',
+    photoUrl: ''
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handlePhotoSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData({ 
+          ...formData, 
+          avatar: reader.result as string,
+          avatarType: 'photo',
+          photoUrl: reader.result as string
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,14 +107,57 @@ export default function Registration({ onComplete }: RegistrationProps) {
             <div className="animate-fade-in space-y-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Выберите аватар</label>
+                
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className={`w-full p-4 rounded-2xl border-2 border-dashed transition-all mb-4 ${
+                    formData.avatarType === 'photo'
+                      ? 'border-primary bg-primary/10'
+                      : 'border-muted hover:border-primary/50 hover:bg-muted/50'
+                  }`}
+                >
+                  {formData.avatarType === 'photo' && formData.photoUrl ? (
+                    <div className="flex items-center gap-3">
+                      <img 
+                        src={formData.photoUrl} 
+                        alt="Avatar" 
+                        className="w-16 h-16 rounded-full object-cover"
+                      />
+                      <div className="flex-1 text-left">
+                        <div className="font-medium">Фото выбрано</div>
+                        <div className="text-sm text-muted-foreground">Нажмите для изменения</div>
+                      </div>
+                      <Icon name="Check" className="text-primary" size={24} />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3 justify-center">
+                      <Icon name="Camera" size={24} className="text-muted-foreground" />
+                      <div className="text-left">
+                        <div className="font-medium">Загрузить фото</div>
+                        <div className="text-sm text-muted-foreground">Выберите из галереи</div>
+                      </div>
+                    </div>
+                  )}
+                </button>
+                
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoSelect}
+                  className="hidden"
+                />
+                
+                <div className="text-sm text-muted-foreground mb-2">Или выберите эмодзи:</div>
                 <div className="grid grid-cols-4 gap-3">
                   {['😊', '🎨', '🎮', '🎵', '⚡', '🌟', '🔥', '💎'].map((emoji) => (
                     <button
                       key={emoji}
                       type="button"
-                      onClick={() => setFormData({ ...formData, avatar: emoji })}
+                      onClick={() => setFormData({ ...formData, avatar: emoji, avatarType: 'emoji', photoUrl: '' })}
                       className={`text-4xl p-4 rounded-2xl transition-all hover:scale-110 ${
-                        formData.avatar === emoji
+                        formData.avatar === emoji && formData.avatarType === 'emoji'
                           ? 'bg-primary/20 ring-2 ring-primary scale-110'
                           : 'bg-muted/50 hover:bg-muted'
                       }`}
